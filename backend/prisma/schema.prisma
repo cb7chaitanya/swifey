@@ -1,0 +1,83 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  VERIFIED
+}
+
+enum StakingStatus {
+  PENDING
+  ACTIVE
+  WITHDRAWN
+}
+
+enum StakingTransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+model User {
+  id               String   @id @default(cuid())
+  name             String
+  dateOfBirth      DateTime
+  gender           Gender
+  graduatedFrom    String
+  currentlyWorking String
+  role             String
+
+  verificationStatus  VerificationStatus @default(UNVERIFIED)
+  verificationDetails Json?
+  password         String
+  walletAddress    String @unique
+
+  connections      Connection[] @relation("UserConnections")
+  stakingTransactions StakingTransaction[]
+}
+
+model Connection {
+  id           String @id @default(cuid())
+  // participants[0]: Connection initiator, participants[1]: Connection accepter
+  participants User[] @relation("UserConnections")
+
+  stakingStatus  StakingStatus @default(PENDING)
+  connectionDate DateTime?
+
+  chatHistoryRetained Boolean       @default(false)
+  chatHistory         ChatMessage[]
+}
+
+model StakingTransaction {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  amount          Float 
+  transactionHash String
+  timestamp       DateTime                 @default(now())
+  status          StakingTransactionStatus
+}
+
+model ChatMessage {
+  id           String     @id @default(cuid())
+  connectionId String
+  connection   Connection @relation(fields: [connectionId], references: [id])
+
+  senderId  String
+  content   String
+  timestamp DateTime @default(now())
+}
