@@ -11,7 +11,7 @@ export const generateConfig = async(req: Request, res: Response) => {
             return
         }
         const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID)
-        reclaimProofRequest.setAppCallbackUrl('http://localhost:3000/api/v1/recieve-proofs')
+        reclaimProofRequest.setAppCallbackUrl('http://localhost:3000/api/v1/reclaim/recieve-proofs')
         const reclaimProofRequestConfig = reclaimProofRequest.toJsonString()
         res.json({
             reclaimProofRequestConfig
