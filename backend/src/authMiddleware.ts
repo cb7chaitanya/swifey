@@ -19,7 +19,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         }
         const parts = header.split(' ')
         if(parts.length !== 2 || parts[0] !== 'Bearer'){
-            res.json({
+            res.status(403).json({
                 message: "Unauthorized"
             })
             return

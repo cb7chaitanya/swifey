@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express"
 import { mainRouter } from "./routes"
+import cors from 'cors'
 const app = express()
+
+app.use(cors())
 app.use(express.json())
 
 app.get('/', async(req: Request, res: Response) => {
