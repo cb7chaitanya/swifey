@@ -7,13 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-  PREFER_NOT_TO_SAY
-}
-
 enum VerificationStatus {
   UNVERIFIED
   VERIFIED
@@ -35,7 +28,7 @@ model User {
   id               String   @id @default(cuid())
   name             String
   dateOfBirth      DateTime
-  gender           Gender
+  gender           String
   graduatedFrom    String
   currentlyWorking String
   role             String
@@ -58,7 +51,7 @@ model Connection {
   connectionDate DateTime?
 
   chatHistoryRetained Boolean       @default(false)
-  chatHistory         ChatMessage[]
+  chatHistory         ChatMessage[] 
 }
 
 model StakingTransaction {

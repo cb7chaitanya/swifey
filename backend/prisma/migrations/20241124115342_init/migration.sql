@@ -1,14 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `DOB` on the `User` table. All the data in the column will be lost.
-  - You are about to drop the column `college` on the `User` table. All the data in the column will be lost.
-  - You are about to drop the column `currentEmployment` on the `User` table. All the data in the column will be lost.
-  - You are about to drop the column `role` on the `User` table. All the data in the column will be lost.
-  - Added the required column `dateOfBirth` to the `User` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `password` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "VerificationStatus" AS ENUM ('UNVERIFIED', 'VERIFIED');
 
@@ -18,20 +7,22 @@ CREATE TYPE "StakingStatus" AS ENUM ('PENDING', 'ACTIVE', 'WITHDRAWN');
 -- CreateEnum
 CREATE TYPE "StakingTransactionStatus" AS ENUM ('PENDING', 'CONFIRMED', 'FAILED');
 
--- AlterEnum
-ALTER TYPE "Gender" ADD VALUE 'PREFER_NOT_TO_SAY';
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "dateOfBirth" TIMESTAMP(3) NOT NULL,
+    "gender" TEXT NOT NULL,
+    "graduatedFrom" TEXT NOT NULL,
+    "currentlyWorking" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "verificationStatus" "VerificationStatus" NOT NULL DEFAULT 'UNVERIFIED',
+    "verificationDetails" JSONB,
+    "password" TEXT NOT NULL,
+    "walletAddress" TEXT NOT NULL,
 
--- AlterTable
-ALTER TABLE "User" DROP COLUMN "DOB",
-DROP COLUMN "college",
-DROP COLUMN "currentEmployment",
-DROP COLUMN "role",
-ADD COLUMN     "currentlyWorking" TEXT,
-ADD COLUMN     "dateOfBirth" TIMESTAMP(3) NOT NULL,
-ADD COLUMN     "graduatedFrom" TEXT,
-ADD COLUMN     "password" TEXT NOT NULL,
-ADD COLUMN     "verificationDetails" JSONB,
-ADD COLUMN     "verificationStatus" "VerificationStatus" NOT NULL DEFAULT 'UNVERIFIED';
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Connection" (
@@ -71,6 +62,9 @@ CREATE TABLE "_UserConnections" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_walletAddress_key" ON "User"("walletAddress");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_UserConnections_AB_unique" ON "_UserConnections"("A", "B");
