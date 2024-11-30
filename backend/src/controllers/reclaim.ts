@@ -11,7 +11,8 @@ export const generateConfig = async(req: Request, res: Response) => {
             return
         }
         const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID)
-        reclaimProofRequest.setAppCallbackUrl('http://localhost:3000/api/v1/reclaim/recieve-proofs')
+        reclaimProofRequest.setAppCallbackUrl('https://6342-122-177-97-29.ngrok-free.app/api/v1/reclaim/recieve-proofs')
+        // reclaimProofRequest.setRedirectUrl('exp://ykvceno-cb7chaitanya-8081.exp.direct/(tabs)/profile')
         const reclaimProofRequestConfig = reclaimProofRequest.toJsonString()
         res.json({
             reclaimProofRequestConfig
