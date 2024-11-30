@@ -10,7 +10,7 @@ import { Link, router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRecoilValue } from 'recoil';
 import { walletPublicKey } from '@/store/atoms/wallet';
-
+import { API_BASE_URL } from '@/conf';
 export const APP_IDENTITY = {
     name: 'Swifey',
     uri:  'http://localhost:8081',
@@ -44,7 +44,7 @@ export default function ProfileCreationForm() {
                 password: password,
                 walletAddress: 'qrhwjhkjqjrq'
             }
-            const response = await axios.post('http://10.0.2.2:3000/api/v1/user/profile-creation', profileData)
+            const response = await axios.post(`${API_BASE_URL}/user/profile-creation`, profileData)
             if (response.status === 200) {
                 const { token } = response.data;
                 await AsyncStorage.setItem('auth-token', token)

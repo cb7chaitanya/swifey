@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link, router } from 'expo-router';
+import { API_BASE_URL } from '@/conf';
 
 export default function SignInForm() {
     const [walletAddress, setWalletAddress] = useState('');
@@ -12,7 +13,7 @@ export default function SignInForm() {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('http://10.0.2.2:3000/api/v1/user/signin', { walletAddress, password });
+            const response = await axios.post(`${API_BASE_URL}/user/signin`, { walletAddress, password });
             if (response.status === 200) {
                 const { token } = response.data;
                 await AsyncStorage.setItem('auth-token', token);
@@ -23,7 +24,7 @@ export default function SignInForm() {
             }
         } catch (error: any) {
             console.error(error);
-            Alert.alert('Network error. Please check your connection.');
+            Alert.alert(`Network error. Please check your connection. ${error}`);
         }
     };
 

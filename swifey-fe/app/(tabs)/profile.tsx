@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import ReclaimComponent from "@/components/Reclaim";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "@/conf";
 
 interface Connection {
     id: string;
@@ -30,7 +31,7 @@ export default function Profile() {
         const fetchUserProfile = async () => {
             try {
                 const token = await AsyncStorage.getItem('auth-token')
-                const response = await axios.get(`http://10.0.2.2:3000/api/v1/user/your-profile`, {
+                const response = await axios.get(`${API_BASE_URL}/user/your-profile`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

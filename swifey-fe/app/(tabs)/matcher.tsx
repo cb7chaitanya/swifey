@@ -17,6 +17,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useRecoilValue } from "recoil";
 import { walletPublicKey } from "@/store/atoms/wallet";
 import { PublicKey } from "@solana/web3.js";
+import { API_BASE_URL } from "@/conf";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -91,7 +92,7 @@ function MatchingUI() {
       try {
         const token = await AsyncStorage.getItem("auth-token");
         const response = await axios.get(
-          "http://10.0.2.2:3000/api/v1/user/unmatched-profiles",
+          `${API_BASE_URL}/user/unmatched-profiles`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -113,7 +114,7 @@ function MatchingUI() {
     try {
       const token = await AsyncStorage.getItem("auth-token");
       await axios.post(
-        "http://10.0.2.2:3000/api/v1/user/initiate-connection",
+        `${API_BASE_URL}/user/initiate-connection`,
         body,
         {
           headers: {
@@ -168,7 +169,7 @@ function PendingOutgoingConnections() {
     const fetchPendingOutgoing = async () => {
       const token = await AsyncStorage.getItem("auth-token");
       const response = await axios.get(
-        "http://10.0.2.2:3000/api/v1/user/pending-outgoing-connections",
+        `${API_BASE_URL}/user/pending-outgoing-connections`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -181,10 +182,10 @@ function PendingOutgoingConnections() {
   }, []);
 
   const onPressHandler = async () => {
-    await signAndSendTransaction(platformWalletAddress, walletAddress!);
+    // await signAndSendTransaction(platformWalletAddress, walletAddress!);
     const token = await AsyncStorage.getItem("auth-token");
     const response = await axios.delete(
-      "http://10.0.2.2:3000/api/v1/user/decline-connection",
+      `${API_BASE_URL}/user/decline-connection`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -239,7 +240,7 @@ function PendingReceivedConnections() {
     const fetchPendingReceived = async () => {
       const token = await AsyncStorage.getItem("auth-token");
       const response = await axios.get(
-        "http://10.0.2.2:3000/api/v1/user/pending-recieved-connections",
+        `${API_BASE_URL}/user/pending-recieved-connections`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -251,11 +252,11 @@ function PendingReceivedConnections() {
     // fetchPendingReceived();
   }, []);
 
-  const onPressHandler = async () => {
+  const onPressHandler = async (otherUserId: string) => {
     // await signAndSendTransaction(platformWalletAddress, walletAddress!)
     const token = await AsyncStorage.getItem("auth-token");
     const response = await axios.delete(
-      "http://10.0.2.2:3000/api/v1/user/decline-connection",
+      `${API_BASE_URL}/user/decline-connection`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -263,6 +264,7 @@ function PendingReceivedConnections() {
       }
     );
     console.log("responseData", response.data);
+    setPendingReceived(prev => prev.filter(profile => profile.id !== otherUserId));
   };
 
   return (
@@ -296,7 +298,7 @@ function PendingReceivedConnections() {
                       otherUserId: otherUserId,
                     };
                     const response = await axios.put(
-                      "http://10.0.2.2:3000/api/v1/user/accept-connection",
+                      `${API_BASE_URL}/user/accept-connection`,
                       body,
                       {
                         headers: {
@@ -305,13 +307,14 @@ function PendingReceivedConnections() {
                       }
                     );
                     console.log("responseData", response.data);
+                    setPendingReceived(prev => prev.filter(profile => profile.id !== otherUserId));
                   }}
                 >
                   <Icon name="check" size={24} color="#4CAF50" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    onPressHandler();
+                    onPressHandler(item.id);
                   }}
                 >
                   <Icon name="times" size={24} color="#FF6347" />
