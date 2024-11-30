@@ -38,7 +38,7 @@
    ```
 
 3. Environment Setup
-   - Create a `.env` file in the backend directory with the following variables:
+   Create a `.env` file in the backend directory with the following variables:
      ```
      JWT_SECRET=your_jwt_secret
      APP_ID=your_reclaim_app_id
