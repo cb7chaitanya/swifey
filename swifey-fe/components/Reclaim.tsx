@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import { View, Button, Text } from 'react-native';
+import { View, Button, Text, Linking, Platform } from 'react-native';
 import { ReclaimProofRequest } from '@reclaimprotocol/reactnative-sdk';
 import axios from 'axios';
-import * as Clipboard from 'expo-clipboard';
+import { API_BASE_URL } from '@/conf';
 
 const ReclaimComponent = () => {
   const [status, setStatus] = useState('');
-  const copyToClipboard = async (string: string) => {
-    await Clipboard.setStringAsync(string);
-  }; 
+
   const initializeReclaim = async () => {
     try {
       setStatus('Initializing...');
  
-      const response = await axios.get('http://10.0.2.2:3000/api/v1/reclaim/generate-config');
+      const response = await axios.get(`${API_BASE_URL}/reclaim/generate-config`);
       const { reclaimProofRequestConfig } = response.data;
- 
+      
       const reclaimProofRequest = await ReclaimProofRequest.fromJsonString(reclaimProofRequestConfig);
  
       const requestUrl = await reclaimProofRequest.getRequestUrl();
+      await Linking.openURL(requestUrl)
        await reclaimProofRequest.startSession({
         onSuccess: (proofs) => {
+          console.log(proofs)
           if (proofs) {
             if (typeof proofs === 'string') {
               console.log('SDK Message:', proofs);
@@ -37,14 +37,19 @@ const ReclaimComponent = () => {
       });
  
       console.log('Request URL:', requestUrl);
-      copyToClipboard(requestUrl)
       setStatus(`Reclaim process started. Paste the URL in your clipboard in Reclaim Verifier`);
     } catch (error) {
       console.error('Error initializing Reclaim:', error);
       setStatus('Error initializing Reclaim. Please try again.');
     }
   };
- 
+  if(Platform.OS === 'web'){
+    return (
+      <View>
+        <Text>Reclaim verification is not supported on web platforms.</Text>
+      </View>
+    );
+  }
   return (
     <View>
       <Button title="Start Reclaim Process" onPress={initializeReclaim} />
